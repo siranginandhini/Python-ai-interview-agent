@@ -5,7 +5,7 @@ import re
 from typing import Any
 
 DIFFICULTIES = ("Easy", "Medium", "Hard")
-
+##helper funtcions git checking
 
 def extract_json(content: str) -> dict[str, Any]:
     text = re.sub(r"^```(?:json)?\s*|\s*```$", "", content.strip(), flags=re.I)
