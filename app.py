@@ -2,6 +2,7 @@
 from __future__ import annotations
 import os
 import streamlit as st
+from utils.feedback import generate_feedback
 from dotenv import load_dotenv
 from agents.evaluation_agent import EvaluationAgent
 from agents.interview_agent import InterviewAgent
@@ -112,10 +113,44 @@ def chat_page():
 
 def report_page():
     state, report = st.session_state, st.session_state["report"]
-    st.title("Interview Completed"); st.write(f"**{state['name']}** · {state['experience']} · {state['interview_type']}")
+
+    st.title("Interview Completed")
+    st.write(
+        f"**{state['name']}** · "
+        f"{state['experience']} · "
+        f"{state['interview_type']}"
+    )
+
     st.metric("Questions completed", len(state["records"]))
+
+    # New feedback feature
+   def report_page():
+    state, report = st.session_state, st.session_state["report"]
+    st.title("Interview Completed")
+    st.write(f"**{state['name']}** · {state['experience']} · {state['interview_type']}")
+
+    st.metric("Questions completed", len(state["records"]))
+
+    # ADD THIS
+    scores = {
+        "technical": round(
+            sum(r["score"] for r in state["records"]) / len(state["records"]),
+            1
+        )
+    }
+
+    feedback = generate_feedback(scores)
+
+    st.subheader("Interview Feedback")
+    st.write("Overall Percentage:", feedback["percentage"], "%")
+    st.write("Strengths:", feedback["strengths"])
+    st.write("Areas to Improve:", feedback["areas_to_improve"])
+
+    # YOUR EXISTING CODE CONTINUES
     st.subheader("Your interview summary")
-    st.write(report["summary"]); st.subheader("Python Skill Breakdown"); st.bar_chart(report["skill_breakdown"])
+    st.write(report["summary"])
+    st.subheader("Python Skill Breakdown"); 
+    st.bar_chart(report["skill_breakdown"])
     left, right = st.columns(2)
     with left: st.markdown("**Strengths**"); st.markdown(bullets(report["strengths"]))
     with right: st.markdown("**Weaknesses**"); st.markdown(bullets(report["weaknesses"]))
